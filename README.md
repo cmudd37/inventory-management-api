@@ -1,13 +1,13 @@
-# Inventory Management API
+# Secure Inventory Management API
 
-A secure RESTful API for managing products and categories with JWT-based authentication.
+A RESTful backend system for managing products and categories with secure JWT-based authentication.
 
 ## Features
 - User registration and login
 - JWT authentication (stateless)
-- Secure password hashing (BCrypt)
+- Password hashing using BCrypt
 - CRUD operations for products and categories
-- Search and filtering
+- Search and filtering functionality
 - Global exception handling
 
 ## Tech Stack
@@ -17,17 +17,29 @@ A secure RESTful API for managing products and categories with JWT-based authent
 - PostgreSQL
 - JPA / Hibernate
 
-## Endpoints
-- POST /auth/register
-- POST /auth/login
-- GET /products
-- POST /products
-- GET /categories
+## Architecture
+This project follows a layered architecture:
+
+- Controller → Handles HTTP requests
+- Service → Business logic
+- Repository → Database access
+- DTO → Data transfer
+- Security → JWT authentication
+
+## Authentication Flow
+1. User registers
+2. User logs in → receives JWT
+3. Token is sent in Authorization header
+4. Protected endpoints validate token
+
+## Example Request
+
+GET /products
+
+Authorization: Bearer <token>
 
 ## How to Run
-1. Clone the repo
-2. Configure PostgreSQL in `application.properties`
-3. Run the application: mvn spring-boot:run
-
-## Notes
-- Uses statless authentication via JWT instad of session-based login.
+1. Clone repo
+2. Configure database in application.properties
+3. Run:
+   mvn spring-boot:run
