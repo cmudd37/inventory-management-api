@@ -2,10 +2,17 @@ HELP.md
 target/
 *.log
 .env
+
+# IntelliJ
 .idea/
 *.iml
+*.iws
+*.ipr
 
+# Maven wrapper
 .mvn/wrapper/maven-wrapper.jar
+
+# Allow nested target folders (Spring quirk)
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -17,12 +24,6 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
 
 ### NetBeans ###
 /nbproject/private/

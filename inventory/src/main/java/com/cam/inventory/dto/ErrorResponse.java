@@ -1,6 +1,6 @@
 package com.cam.inventory.dto;
 
-import com.cam.inventory.entity.Product;
+
 
 import java.time.LocalDateTime;
 
