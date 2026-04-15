@@ -1,7 +1,5 @@
 package com.cam.inventory.dto;
 
-
-
 import java.time.LocalDateTime;
 
 public class ErrorResponse {
