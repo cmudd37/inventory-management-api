@@ -1,0 +1,39 @@
+HELP.md
+target/
+*.log
+.env
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# Allow nested target folders (Spring quirk)
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
