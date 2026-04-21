@@ -67,7 +67,11 @@ This project follows a layered architecture:
 
 ## How to Run
 1. Clone the repo:
+    
+    
     git clone https://github.com/cmudd37/inventory-management-api.git
+
+
     cd inventory-management-api
 
 2. Configure PostgreSQL in (src/main/resources/application.properties):
