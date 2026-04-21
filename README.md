@@ -1,6 +1,6 @@
 # Secure Inventory Management API
 
-A RESTful backend system for managing products and categories with secure JWT-based authentication.
+A REST API for managing inventory, featuring JWT-based authentication, role-based security, and full CRUD operations for products and categories.
 
 ## Screenshots
 
@@ -35,19 +35,55 @@ This project follows a layered architecture:
 - Security → JWT authentication
 
 ## Authentication Flow
-1. User registers
-2. User logs in → receives JWT
-3. Token is sent in Authorization header
-4. Protected endpoints validate token
+1. User registers via `/auth/register`
+2. User logs in via `/auth/login`
+3. Server returns a JWT token
+4. Token is sent in the `Authorization` header: Authorization: Bearer <token>
+5. Protected endpoints validate the token before processing requests
 
-## Example Request
+## Example API Usage
 
-GET /products
+### Register
+**POST /auth/register**
+    ```json
+    {
+        "username": "cam",
+        "password": "1234"
+    }
 
-Authorization: Bearer <token>
+## Login
+**POST /auth/login**
+    ```json
+    {
+        "username": "cam"
+        "password": "1234"
+    }
+
+## Get Products(Protected)
+**GET /products**
+
+- Header:  Authorization: Bearer <token>
+
 
 ## How to Run
-1. Clone repo
-2. Configure database in application.properties
+1. Clone the repo:
+    git clone https://github.com/cmudd37/inventory-management-api.git
+    cd inventory-management-api
+
+2. Configure PostgreSQL in (src/main/resources/application.properties):
+    spring.datasource.url=jdbc:postgresql://localhost:5432/your_db
+    spring.datasource.username=your_username
+    spring.datasource.password=your_password
+
 3. Run:
    mvn spring-boot:run
+
+4. Test Endpoints: 
+    Use Postman or any API client.
+
+📌 Future Improvements:
+Role-based authorization (admin/user roles)
+Refresh tokens for JWT
+Docker containerization
+API documentation (OpenAPI)
+Deployment to cloud (AWS)
