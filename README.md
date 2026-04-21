@@ -1,4 +1,3 @@
-```md
 # Secure Inventory Management API
 
 A REST API for managing inventory, featuring JWT-based authentication, role-based security, and full CRUD operations for products and categories.
@@ -46,12 +45,11 @@ This project follows a layered architecture:
 
 ### Register
 **POST /auth/register**
-
-```json
-{
-"username": "cam",
-"password": "1234"
-}
+    ```json
+    {
+        "username": "cam",
+        "password": "1234"
+    }
 
 ## Login
 **POST /auth/login**
