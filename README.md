@@ -85,8 +85,8 @@ This project follows a layered architecture:
     Use Postman or any API client.
 
 📌 Future Improvements:
-Role-based authorization (admin/user roles)
-Refresh tokens for JWT
-Docker containerization
-API documentation (OpenAPI)
-Deployment to cloud (AWS)
+- Role-based authorization (admin/user roles)
+- Refresh tokens for JWT
+- Docker containerization
+- API documentation (OpenAPI)
+- Deployment to cloud (AWS)
