@@ -1,3 +1,4 @@
+```md
 # Secure Inventory Management API
 
 A REST API for managing inventory, featuring JWT-based authentication, role-based security, and full CRUD operations for products and categories.
@@ -45,11 +46,12 @@ This project follows a layered architecture:
 
 ### Register
 **POST /auth/register**
-    ```json
-    {
-        "username": "cam",
-        "password": "1234"
-    }
+
+```json
+{
+"username": "cam",
+"password": "1234"
+}
 
 ## Login
 **POST /auth/login**
@@ -71,8 +73,11 @@ This project follows a layered architecture:
     cd inventory-management-api
 
 2. Configure PostgreSQL in (src/main/resources/application.properties):
+
     spring.datasource.url=jdbc:postgresql://localhost:5432/your_db
+
     spring.datasource.username=your_username
+
     spring.datasource.password=your_password
 
 3. Run:
