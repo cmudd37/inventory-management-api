@@ -2,6 +2,14 @@
 
 A RESTful backend system for managing products and categories with secure JWT-based authentication.
 
+## Screenshots
+
+### Login
+![Login](images/login.png)
+
+### Products (Authenticated)
+![Products](images/products.png)
+
 ## Features
 - User registration and login
 - JWT authentication (stateless)
