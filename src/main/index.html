@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory App</title>
+</head>
+<body>
+
+<h2>Login</h2>
+<input id="username" placeholder="username">
+<input id="password" placeholder="password" type="password">
+<button onclick="login()">Login</button>
+<button onclick="logout()">Logout</button>
+
+<p id="status"></p>
+
+<h2>Products</h2>
+<button onclick="getProducts()">Load Products</button>
+<ul id="products"></ul>
+
+<script>
+    let token = localStorage.getItem("token") || "";
+
+    if (token) {
+        document.getElementById("status").innerText = "Already logged in ✅";
+    }
+
+    // 🔐 LOGIN
+    async function login() {
+        const res = await fetch("http://localhost:8080/auth/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                username: document.getElementById("username").value,
+                password: document.getElementById("password").value
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.token) {
+            token = data.token;
+            localStorage.setItem("token", token);
+            document.getElementById("status").innerText = "Logged in ✅";
+            console.log("Token:", token);
+        } else {
+            document.getElementById("status").innerText = "Login failed ❌";
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem("token");
+        token = "";
+        document.getElementById("status").innerText = "Logged out";
+    }
+
+    // 📦 GET PRODUCTS
+    async function getProducts() {
+        const res = await fetch("http://localhost:8080/products", {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        if (res.status === 403) {
+            alert("Unauthorized ❌");
+            return;
+        }
+
+        const data = await res.json();
+
+        const list = document.getElementById("products");
+        list.innerHTML = "";
+
+        data.forEach(p => {
+            const li = document.createElement("li");
+
+            li.innerHTML = `
+    <strong>${p.name}</strong><br>
+    ID: ${p.id}<br>
+    Price: $${p.price}<br>
+    Quantity: ${p.quantity}
+    <hr>
+  `;
+
+            list.appendChild(li);
+        });
+
+    }
+</script>
+
+</body>
+</html>
