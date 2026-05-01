@@ -14,6 +14,11 @@
 <p id="status"></p>
 
 <h2>Products</h2>
+<h3>Create Product</h3>
+<input id="name" placeholder="Name">
+<input id="price" placeholder="Price" type="number">
+<label for="quantity"></label><input id="quantity" placeholder="Quantity" type="number">
+<button onclick="createProduct()">Create</button>
 <button onclick="getProducts()">Load Products</button>
 <ul id="products"></ul>
 
@@ -21,10 +26,10 @@
     let token = localStorage.getItem("token") || "";
 
     if (token) {
-        document.getElementById("status").innerText = "Already logged in ✅";
+        document.getElementById("status").innerText = "Already logged in";
     }
 
-    // 🔐 LOGIN
+    // LOGIN
     async function login() {
         const res = await fetch("http://localhost:8080/auth/login", {
             method: "POST",
@@ -40,10 +45,10 @@
         if (data.token) {
             token = data.token;
             localStorage.setItem("token", token);
-            document.getElementById("status").innerText = "Logged in ✅";
+            document.getElementById("status").innerText = "Logged in";
             console.log("Token:", token);
         } else {
-            document.getElementById("status").innerText = "Login failed ❌";
+            document.getElementById("status").innerText = "Login failed";
         }
     }
 
@@ -53,7 +58,7 @@
         document.getElementById("status").innerText = "Logged out";
     }
 
-    // 📦 GET PRODUCTS
+    // GET PRODUCTS
     async function getProducts() {
         const res = await fetch("http://localhost:8080/products", {
             headers: {
@@ -62,7 +67,7 @@
         });
 
         if (res.status === 403) {
-            alert("Unauthorized ❌");
+            alert("Unauthorized");
             return;
         }
 
@@ -78,13 +83,50 @@
     <strong>${p.name}</strong><br>
     ID: ${p.id}<br>
     Price: $${p.price}<br>
-    Quantity: ${p.quantity}
+    Quantity: ${p.quantity}<br>
+    <button onclick="deleteProduct(${p.id})">Delete</button>
     <hr>
   `;
-
             list.appendChild(li);
         });
+    }
 
+    async function createProduct() {
+        const res = await fetch("http://localhost:8080/products", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                name: document.getElementById("name").value,
+                price: parseFloat(document.getElementById("price").value),
+                quantity: parseInt(document.getElementById("quantity").value)
+            })
+        });
+
+        if (res.ok) {
+            alert("Product created");
+            getProducts(); // refresh list
+        } else {
+            alert("Failed to create");
+        }
+    }
+
+    async function deleteProduct(id) {
+        const res = await fetch(`http://localhost:8080/products/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        if (res.ok) {
+            alert("Deleted");
+            getProducts();
+        } else {
+            alert("Delete failed");
+        }
     }
 </script>
 
