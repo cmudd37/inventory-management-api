@@ -11,11 +11,11 @@ import java.util.Optional;
 
 @Service
 public class AuthService {
+    private final JwtUtil jwtUtil;
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
 
-    public AuthService(UserRepository userRepository,  PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -31,10 +31,11 @@ public class AuthService {
             throw new RuntimeException("Username already exists");
         }
 
-        User user = new User(
-                request.getUsername(),
-                passwordEncoder.encode(request.getPassword())
-        );
+        User user = new User();
+
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole("ROLE_USER");
 
         userRepository.save(user);
 
@@ -48,7 +49,7 @@ public class AuthService {
             throw new RuntimeException("Invalid password");
         }
 
-        return jwtUtil.generateToken(user.getUsername());
+        return jwtUtil.generateToken(user.getUsername(), user.getRole());
     }
 
 }
