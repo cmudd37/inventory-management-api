@@ -11,23 +11,34 @@
 <button onclick="login()">Login</button>
 <button onclick="logout()">Logout</button>
 
+
 <p id="status"></p>
 
-<h2>Products</h2>
-<h3>Create Product</h3>
-<input id="name" placeholder="Name">
-<input id="price" placeholder="Price" type="number">
-<label for="quantity"></label><input id="quantity" placeholder="Quantity" type="number">
-<button onclick="createProduct()">Create</button>
-<button onclick="getProducts()">Load Products</button>
-<ul id="products"></ul>
+<div id="productSection">
+    <h2>Products</h2>
+
+    <div id="adminControls">
+        <h3>Create Product</h3>
+        <input id="name" placeholder="Name">
+        <input id="price" placeholder="Price" type="number">
+        <input id="quantity" placeholder="Quantity" type="number">
+        <button onclick="createProduct()">Create</button>
+    </div>
+
+    <button onclick="getProducts()">Load Products</button>
+    <ul id="products"></ul>
+</div>
 
 <script>
     let token = localStorage.getItem("token") || "";
 
     if (token) {
         document.getElementById("status").innerText = "Already logged in";
+    } else {
+        document.getElementById("status").innerText = "Logged out";
     }
+
+    updateUIForRole();
 
     // LOGIN
     async function login() {
@@ -47,8 +58,9 @@
             localStorage.setItem("token", token);
             document.getElementById("status").innerText = "Logged in";
             console.log("Token:", token);
-        } else {
-            document.getElementById("status").innerText = "Login failed";
+
+            updateUIForRole();
+            getProducts();
         }
     }
 
@@ -56,6 +68,8 @@
         localStorage.removeItem("token");
         token = "";
         document.getElementById("status").innerText = "Logged out";
+
+        document.getElementById("products").innerHTML = "";
     }
 
     // GET PRODUCTS
@@ -66,7 +80,7 @@
             }
         });
 
-        if (res.status === 403) {
+        if (res.status === 401 || res.status === 403) {
             alert("Unauthorized");
             return;
         }
@@ -143,6 +157,17 @@
 
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.role;
+    }
+
+    function updateUIForRole() {
+        const role = getRoleFromToken();
+        const controls = document.getElementById("adminControls");
+
+        if (role === "ROLE_ADMIN") {
+            controls.style.display = "block";
+        } else {
+            controls.style.display = "none";
+        }
     }
 </script>
 
