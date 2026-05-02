@@ -76,17 +76,26 @@
         const list = document.getElementById("products");
         list.innerHTML = "";
 
+        const role = getRoleFromToken();
+
         data.forEach(p => {
             const li = document.createElement("li");
 
+            let deleteButton = "";
+
+            if (role === "ROLE_ADMIN") {
+                deleteButton = `<button onclick="deleteProduct(${p.id})">Delete</button>`;
+            }
+
             li.innerHTML = `
-    <strong>${p.name}</strong><br>
-    ID: ${p.id}<br>
-    Price: $${p.price}<br>
-    Quantity: ${p.quantity}<br>
-    <button onclick="deleteProduct(${p.id})">Delete</button>
-    <hr>
-  `;
+                <strong>${p.name}</strong><br>
+                ID: ${p.id}<br>
+                Price: $${p.price}<br>
+                Quantity: ${p.quantity}<br>
+                ${deleteButton}
+                <hr>
+            `;
+
             list.appendChild(li);
         });
     }
@@ -127,6 +136,13 @@
         } else {
             alert("Delete failed");
         }
+    }
+
+    function getRoleFromToken() {
+        if (!token) return null;
+
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.role;
     }
 </script>
 
