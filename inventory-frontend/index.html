@@ -42,7 +42,7 @@
 
     // LOGIN
     async function login() {
-        const res = await fetch("http://localhost:8080/auth/login", {
+        const res = await fetch("https://inventory-management-api-4lge.onrender.com/auth/login", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -69,12 +69,13 @@
         token = "";
         document.getElementById("status").innerText = "Logged out";
 
+
         document.getElementById("products").innerHTML = "";
     }
 
     // GET PRODUCTS
     async function getProducts() {
-        const res = await fetch("http://localhost:8080/products", {
+        const res = await fetch("https://inventory-management-api-4lge.onrender.com/products", {
             headers: {
                 "Authorization": "Bearer " + token
             }
@@ -115,7 +116,7 @@
     }
 
     async function createProduct() {
-        const res = await fetch("http://localhost:8080/products", {
+        const res = await fetch("https://inventory-management-api-4lge.onrender.com/products", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -137,7 +138,7 @@
     }
 
     async function deleteProduct(id) {
-        const res = await fetch(`http://localhost:8080/products/${id}`, {
+        const res = await fetch(`https://inventory-management-api-4lge.onrender.com/products/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + token
