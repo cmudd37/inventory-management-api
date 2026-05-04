@@ -24,7 +24,7 @@ public class SecurityConfig {
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -45,7 +45,8 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 );
