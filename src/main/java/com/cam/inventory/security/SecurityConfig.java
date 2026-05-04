@@ -1,68 +1,45 @@
 package com.cam.inventory.security;
 
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    private final JwtFilter jwtFilter;
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(org.springframework.security.config.Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
+
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-
-                        // allow preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                        // READ = authenticated users
-                        .requestMatchers(HttpMethod.GET, "/products").authenticated()
-
-                        // WRITE = admin only
-                        .requestMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
-
                         .anyRequest().authenticated()
                 );
-        //.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(List.of(
-                "https://inventory-management-api-plum.vercel.app"
-        ));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
     }
 }
