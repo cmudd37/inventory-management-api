@@ -43,8 +43,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                );
+        //.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
