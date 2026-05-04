@@ -29,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String path = request.getServletPath();
+        String path = request.getRequestURI();
 
         if (path.startsWith("/auth")) {
             filterChain.doFilter(request, response);
@@ -39,15 +39,13 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-
             String token = authHeader.substring(7);
 
             try {
                 String username = jwtUtil.extractUsername(token);
-                String role = jwtUtil.extractRole(token); // 👈 GET ROLE
+                String role = jwtUtil.extractRole(token);
 
                 if (username != null && role != null) {
-
                     List<SimpleGrantedAuthority> authorities =
                             List.of(new SimpleGrantedAuthority(role));
 
@@ -61,8 +59,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
 
-            } catch (Exception e) {
-                // ignore invalid token
+            } catch (Exception ignored) {
             }
         }
 
