@@ -30,7 +30,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
 
-                        // READ = anyone logged in
+                        // allow preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // READ = authenticated users
                         .requestMatchers(HttpMethod.GET, "/products").authenticated()
 
                         // WRITE = admin only
@@ -49,8 +52,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "http://localhost:63342",
-                "https://inventory-management-brac5dzsw-cmudd37s-projects.vercel.app"
+                "https://inventory-management-api-plum.vercel.app/"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
