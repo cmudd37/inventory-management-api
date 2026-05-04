@@ -27,6 +27,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(org.springframework.security.config.Customizer.withDefaults())
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
 
