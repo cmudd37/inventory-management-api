@@ -431,6 +431,12 @@
 <script>
     const BASE_URL = "https://inventory-management-api-4lge.onrender.com";
 
+    const formatCurrency = (value) =>
+        new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD"
+        }).format(value);
+
     let token = localStorage.getItem("token") || "";
 
     function showToast(msg, type = "success") {
@@ -499,40 +505,65 @@
     }
 
     async function getProducts() {
+        const list = document.getElementById("products");
+
+        // 🔥 Loading state
+        list.innerHTML = `
+        <div class="empty-state">
+            <span>⏳</span>
+            Loading products...
+        </div>
+    `;
+
         const res = await fetch(`${BASE_URL}/products`, {
             headers: {"Authorization": "Bearer " + token}
         });
 
+        // 🔥 Handle expired session properly
         if (res.status === 401 || res.status === 403) {
-            showToast("Unauthorized", "error");
+            logout();
+            showToast("Session expired. Please sign in again.", "error");
             return;
         }
 
         const data = await res.json();
-        const list = document.getElementById("products");
         const role = getRoleFromToken();
 
-        document.getElementById("productCount").textContent = `${data.length} item${data.length !== 1 ? "s" : ""}`;
+        document.getElementById("productCount").textContent =
+            `${data.length} item${data.length !== 1 ? "s" : ""}`;
 
+        // 🔥 Empty state
         if (data.length === 0) {
-            list.innerHTML = `<div class="empty-state"><span>📦</span>No products found</div>`;
+            list.innerHTML = `
+            <div class="empty-state">
+                <span>📦</span>
+                No products found
+            </div>
+        `;
             return;
         }
 
         list.innerHTML = "";
+
         data.forEach(p => {
             const li = document.createElement("li");
             li.className = "product-item";
+
             li.innerHTML = `
-                <div>
-                    <div class="product-name">${p.name}</div>
-                    <div class="product-id">#${p.id}</div>
-                </div>
-                <span class="product-category">${p.categoryName || "Uncategorized"}</span>
-                <div class="product-meta product-price">$${p.price.toFixed(2)}</div>
-                <div class="product-meta product-qty">Qty: ${p.quantity}</div>
-                ${role === "ROLE_ADMIN" ? `<button class="btn-danger" onclick="deleteProduct(${p.id})">Delete</button>` : "<div></div>"}
-            `;
+            <div>
+                <div class="product-name">${p.name}</div>
+                <div class="product-id">#${p.id}</div>
+            </div>
+            <span class="product-category">${p.categoryName || "Uncategorized"}</span>
+            <div class="product-meta product-price">${formatCurrency(p.price)}</div>
+            <div class="product-meta product-qty">Qty: ${p.quantity}</div>
+            ${
+                role === "ROLE_ADMIN"
+                    ? `<button class="btn-danger" onclick="deleteProduct(${p.id})">Delete</button>`
+                    : "<div></div>"
+            }
+        `;
+
             list.appendChild(li);
         });
     }
