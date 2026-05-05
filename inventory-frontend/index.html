@@ -507,7 +507,7 @@
     async function getProducts() {
         const list = document.getElementById("products");
 
-        // 🔥 Loading state
+        // Loading state
         list.innerHTML = `
         <div class="empty-state">
             <span>⏳</span>
@@ -519,7 +519,7 @@
             headers: {"Authorization": "Bearer " + token}
         });
 
-        // 🔥 Handle expired session properly
+        // Handle expired session properly
         if (res.status === 401 || res.status === 403) {
             logout();
             showToast("Session expired. Please sign in again.", "error");
@@ -532,7 +532,7 @@
         document.getElementById("productCount").textContent =
             `${data.length} item${data.length !== 1 ? "s" : ""}`;
 
-        // 🔥 Empty state
+        // Empty state
         if (data.length === 0) {
             list.innerHTML = `
             <div class="empty-state">
