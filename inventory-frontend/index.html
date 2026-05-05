@@ -1,118 +1,538 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Inventory App</title>
+    <title>Inventory Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+          rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0f1c2e;
+            --navy-mid: #162336;
+            --navy-light: #1e3250;
+            --border: #253d5b;
+            --accent: #2e7df7;
+            --accent-hover: #1a6be0;
+            --accent-soft: rgba(46, 125, 247, 0.1);
+            --text: #e8edf3;
+            --text-muted: #7a92ae;
+            --text-dim: #4a6580;
+            --danger: #e05252;
+            --danger-soft: rgba(224, 82, 82, 0.1);
+            --success: #3ecf8e;
+            --white: #ffffff;
+            --input-bg: #0d1825;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--navy);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* TOP NAV */
+        header {
+            background: var(--navy-mid);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--accent);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .nav-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--text-dim);
+            transition: background 0.3s;
+        }
+
+        .status-dot.active {
+            background: var(--success);
+        }
+
+        /* MAIN LAYOUT */
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        /* CARD */
+        .card {
+            background: var(--navy-mid);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-title {
+            font-size: 0.7rem;
+            font-family: 'DM Mono', monospace;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* FORM ELEMENTS */
+        .form-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        input {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            padding: 0.6rem 0.875rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            min-width: 140px;
+        }
+
+        input::placeholder {
+            color: var(--text-dim);
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        /* BUTTONS */
+        button {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 0.6rem 1.25rem;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(46, 125, 247, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--navy-light);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid rgba(224, 82, 82, 0.2);
+            padding: 0.35rem 0.75rem;
+            font-size: 0.78rem;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        /* PRODUCT TABLE */
+        .product-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .product-header .card-title {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .product-count {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--navy-light);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        #products {
+            list-style: none;
+        }
+
+        .product-item {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto auto;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 1rem;
+            border-radius: 7px;
+            border: 1px solid transparent;
+            transition: all 0.15s;
+            margin-bottom: 0.4rem;
+        }
+
+        .product-item:hover {
+            background: var(--navy-light);
+            border-color: var(--border);
+        }
+
+        .product-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .product-id {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+        }
+
+        .product-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'DM Mono', monospace;
+            text-align: right;
+        }
+
+        .product-price {
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        .product-qty {
+            color: var(--text-muted);
+        }
+
+        .product-category {
+            font-size: 0.72rem;
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            border: 1px solid rgba(46, 125, 247, 0.2);
+            white-space: nowrap;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-dim);
+            font-size: 0.875rem;
+        }
+
+        .empty-state span {
+            display: block;
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* DIVIDER */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 1.5rem 0;
+        }
+
+        /* ADMIN BADGE */
+        .admin-badge {
+            font-size: 0.68rem;
+            font-family: 'DM Mono', monospace;
+            background: rgba(255, 180, 0, 0.1);
+            color: #f5a623;
+            border: 1px solid rgba(245, 166, 35, 0.25);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* TOAST */
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--navy-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.85rem;
+            color: var(--text);
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.25s;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #toast.success {
+            border-left: 3px solid var(--success);
+        }
+
+        #toast.error {
+            border-left: 3px solid var(--danger);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .product-item {
+                grid-template-columns: 1fr auto;
+            }
+
+            .product-meta {
+                display: none;
+            }
+
+            .form-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            input {
+                min-width: unset;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<h2>Login</h2>
-<input id="username" placeholder="username">
-<input id="password" placeholder="password" type="password">
-<button onclick="login()">Login</button>
-<button onclick="logout()">Logout</button>
+<header>
+    <div class="brand">⬡ Inventory Manager</div>
+    <div class="nav-status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="status">Not signed in</span>
+    </div>
+</header>
 
+<main>
 
-<p id="status"></p>
-
-<div id="productSection">
-    <h2>Products</h2>
-
-    <div id="adminControls">
-        <h3>Create Product</h3>
-        <input id="name" placeholder="Name">
-        <input id="price" placeholder="Price" type="number">
-        <input id="quantity" placeholder="Quantity" type="number">
-        <button onclick="createProduct()">Create</button>
+    <!-- AUTH CARD -->
+    <div class="card">
+        <div class="card-title">Authentication</div>
+        <div class="form-row">
+            <input autocomplete="username" id="username" placeholder="Username">
+            <input autocomplete="current-password" id="password" placeholder="Password" type="password">
+            <button class="btn-primary" onclick="login()">Sign In</button>
+            <button class="btn-ghost" onclick="logout()">Sign Out</button>
+        </div>
     </div>
 
-    <button onclick="getProducts()">Load Products</button>
-    <ul id="products"></ul>
-</div>
+    <!-- ADMIN: CREATE PRODUCT -->
+    <div class="card" id="adminControls" style="display:none;">
+        <div class="card-title">Create Product <span class="admin-badge">Admin</span></div>
+        <div class="form-row">
+            <input id="name" placeholder="Product name">
+            <input id="price" placeholder="Price" type="number">
+            <input id="quantity" placeholder="Quantity" type="number">
+            <button class="btn-primary" onclick="createProduct()">Add Product</button>
+        </div>
+    </div>
+
+    <!-- PRODUCTS CARD -->
+    <div class="card">
+        <div class="product-header">
+            <div class="card-title">Products</div>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span class="product-count" id="productCount">0 items</span>
+                <button class="btn-secondary" onclick="getProducts()">↻ Refresh</button>
+            </div>
+        </div>
+        <ul id="products">
+            <div class="empty-state">
+                <span>📦</span>
+                Sign in and load products to get started
+            </div>
+        </ul>
+    </div>
+
+</main>
+
+<div id="toast"></div>
 
 <script>
-    let token = localStorage.getItem("token") || "";
-
-    if (token) {
-        document.getElementById("status").innerText = "Already logged in";
-    } else {
-        document.getElementById("status").innerText = "Logged out";
-    }
-
     const BASE_URL = "https://inventory-management-api-4lge.onrender.com";
 
-    // LOGIN
+    let token = localStorage.getItem("token") || "";
+
+    function showToast(msg, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.textContent = msg;
+        toast.className = `show ${type}`;
+        setTimeout(() => toast.className = "", 3000);
+    }
+
+    function setStatus(loggedIn) {
+        const dot = document.getElementById("statusDot");
+        const status = document.getElementById("status");
+        if (loggedIn) {
+            dot.classList.add("active");
+            const role = getRoleFromToken();
+            status.textContent = role === "ROLE_ADMIN" ? "Signed in · Admin" : "Signed in";
+        } else {
+            dot.classList.remove("active");
+            status.textContent = "Not signed in";
+        }
+    }
+
+    if (token) {
+        setStatus(true);
+        updateUIForRole();
+        getProducts();
+    }
+
     async function login() {
-        const res = await fetch(`${BASE_URL}/auth/login`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                username: document.getElementById("username").value,
-                password: document.getElementById("password").value
-            })
-        });
+        try {
+            const res = await fetch(`${BASE_URL}/auth/login`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value
+                })
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (data.token) {
-            token = data.token;
-            localStorage.setItem("token", token);
-            document.getElementById("status").innerText = "Logged in";
-            console.log("Token:", token);
-
-            updateUIForRole();
-            getProducts();
+            if (data.token) {
+                token = data.token;
+                localStorage.setItem("token", token);
+                setStatus(true);
+                updateUIForRole();
+                getProducts();
+                showToast("Signed in successfully");
+            } else {
+                showToast("Invalid credentials", "error");
+            }
+        } catch (e) {
+            showToast("Login failed", "error");
         }
     }
 
     function logout() {
         localStorage.removeItem("token");
         token = "";
-        document.getElementById("status").innerText = "Logged out";
-
-
-        document.getElementById("products").innerHTML = "";
+        setStatus(false);
+        document.getElementById("products").innerHTML = `
+            <div class="empty-state"><span>📦</span>Sign in and load products to get started</div>`;
+        document.getElementById("productCount").textContent = "0 items";
+        document.getElementById("adminControls").style.display = "none";
+        showToast("Signed out");
     }
 
-    // GET PRODUCTS
     async function getProducts() {
         const res = await fetch(`${BASE_URL}/products`, {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
+            headers: {"Authorization": "Bearer " + token}
         });
 
         if (res.status === 401 || res.status === 403) {
-            alert("Unauthorized");
+            showToast("Unauthorized", "error");
             return;
         }
 
         const data = await res.json();
-
-        console.log("DATA:", data);
-
         const list = document.getElementById("products");
-        list.innerHTML = "";
-
         const role = getRoleFromToken();
 
+        document.getElementById("productCount").textContent = `${data.length} item${data.length !== 1 ? "s" : ""}`;
+
+        if (data.length === 0) {
+            list.innerHTML = `<div class="empty-state"><span>📦</span>No products found</div>`;
+            return;
+        }
+
+        list.innerHTML = "";
         data.forEach(p => {
             const li = document.createElement("li");
-
-            let deleteButton = "";
-
-            if (role === "ROLE_ADMIN") {
-                deleteButton = `<button onclick="deleteProduct(${p.id})">Delete</button>`;
-            }
-
+            li.className = "product-item";
             li.innerHTML = `
-                <strong>${p.name}</strong><br>
-                ID: ${p.id}<br>
-                Price: $${p.price}<br>
-                Quantity: ${p.quantity}<br>
-                ${deleteButton}
-                <hr>
+                <div>
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-id">#${p.id}</div>
+                </div>
+                <span class="product-category">${p.categoryName || "Uncategorized"}</span>
+                <div class="product-meta product-price">$${p.price.toFixed(2)}</div>
+                <div class="product-meta product-qty">Qty: ${p.quantity}</div>
+                ${role === "ROLE_ADMIN" ? `<button class="btn-danger" onclick="deleteProduct(${p.id})">Delete</button>` : "<div></div>"}
             `;
-
             list.appendChild(li);
         });
     }
@@ -132,45 +552,40 @@
         });
 
         if (res.ok) {
-            alert("Product created");
-            getProducts(); // refresh list
+            showToast("Product created");
+            document.getElementById("name").value = "";
+            document.getElementById("price").value = "";
+            document.getElementById("quantity").value = "";
+            getProducts();
         } else {
-            alert("Failed to create");
+            showToast("Failed to create product", "error");
         }
     }
 
     async function deleteProduct(id) {
         const res = await fetch(`${BASE_URL}/products/${id}`, {
             method: "DELETE",
-            headers: {
-                "Authorization": "Bearer " + token
-            }
+            headers: {"Authorization": "Bearer " + token}
         });
 
         if (res.ok) {
-            alert("Deleted");
+            showToast("Product deleted");
             getProducts();
         } else {
-            alert("Delete failed");
+            showToast("Delete failed", "error");
         }
     }
 
     function getRoleFromToken() {
         if (!token) return null;
-
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.role;
     }
 
     function updateUIForRole() {
         const role = getRoleFromToken();
-        const controls = document.getElementById("adminControls");
-
-        if (role === "ROLE_ADMIN") {
-            controls.style.display = "block";
-        } else {
-            controls.style.display = "none";
-        }
+        document.getElementById("adminControls").style.display =
+            role === "ROLE_ADMIN" ? "block" : "none";
     }
 </script>
 
